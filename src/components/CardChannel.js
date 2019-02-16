@@ -14,21 +14,19 @@ export default class CardChannel extends Component {
         error: false
     };
 
-    constructor() {
-        super();
+    componentDidMount(){
         this.updateChannel();
     }
 
     updateChannel() {
-        const id1 = this.state.channels.id =! null && this.state.channels.id;
-        console.info("id1", id1);
-        const id = 1;
-        this.apiService.getAllChannel()
-            .then(channels => this.onChannelLoaded(channels));
-        this.apiService.getTeleprogram(id)
+         this.apiService.getAllChannel()
+            .then(channels => this.onChannelLoaded(channels))
+          //  .then(res1 => {console.info(res1)})
+            .then(res => this.apiService.getTeleprogram()
             .then(transmission => {
+              // console.info("trans", transmission);
                 this.onTransmitionLoaded(transmission)
-            })
+            }))
     }
 
     onChannelLoaded(channels) {
@@ -40,20 +38,27 @@ export default class CardChannel extends Component {
 
     onTransmitionLoaded(transmission) {
         this.setState({
-            channels: transmission
+            // channels: {
+            //     ...this.state.channels,
+            //     transmission,
+            // },
+            transmission,
+            loading: false
         })
     };
 
 
     render() {
         const { transmission, channels, loading} = this.state;
-        const channelsForCards = !loading && channels.map((channel, transmission, index) => {
+        console.info("channels", channels);
+        console.info("transmission", transmission);
+        const channelsForCards = !loading && channels.map((channel, transmission) => {
             return (
                 <div
                     className="item"
-                    id={index}
-                    key={index}>
-                    <ItemChannel channel={channel} transmission={transmission} index={index}/>
+                    id={channel.id}
+                    key={channel.id}>
+                    <ItemChannel channel={channel} transmission={transmission} index={channel.id}/>
                 </div>
             )
         });
